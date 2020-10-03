@@ -1,0 +1,5 @@
+#NEXUS
+begin data;
+dimensions ntax=5 nchar=5000;
+format datatype=dna;
+matrix

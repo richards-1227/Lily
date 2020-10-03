@@ -1,0 +1,7 @@
+Exe output4;
+svdq evalq=all;
+outgroup 1;
+roottrees rootMethod=outgroup;
+savetrees file=svdq.tre format=newick append=yes root=yes;
+set criterion=likelihood;
+quit;
