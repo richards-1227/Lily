@@ -1,0 +1,1182 @@
+---
+title: "sim_results_summary"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+sum.data <- read_excel("Simultation data /method comparison 2.xlsx", sheet = "final2c")
+View(sum.data)
+class(sum.data)
+
+```
+
+```{r}
+sum.data2 <- gather(sum.data[,1:7], method, mean, Q_mean, A_mean)
+sum.data3 <- gather(sum.data[,c(1:5, 8:9)], method, var, Q_var, A_var)
+sum.data3$method <- ifelse(sum.data3$method=="Q_var", "Q", "A")
+sum.data2$method <- ifelse(sum.data2$method=="Q_mean", "Q", "A")
+sum.data4 <- merge(sum.data2, sum.data3)
+```
+
+
+```{r}
+sum.data4$se <- sqrt(sum.data4$var/100)
+sum.data4$percent <- ifelse(nchar(sum.data4$tree)==17, sum.data4$mean/4
+                            , ifelse(nchar(sum.data4$tree)==29, sum.data4$mean/10, sum.data4$mean/18))
+sum.data4$percent_se <- ifelse(nchar(sum.data4$tree)==17, sum.data4$se/4
+                               , ifelse(nchar(sum.data4$tree)==29, sum.data4$se/10, sum.data4$se/18))
+
+```
+
+```{r}
+colors_used <- c("hotpink", "blue", "orange", "purple", "red", "green")
+```
+
+```{r}
+sum.data5 <- sum.data4[sum.data4$tree=="(a,(b,(c,(d,e))))" & sum.data4$theta==0.0008, ]
+p1<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0008", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(a,(b,(c,(d,e))))" & sum.data4$theta>0.0023 & sum.data4$theta<0.0025, ]
+p2<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+  #labs(title="Theta = 0.0024", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(a,(b,(c,(d,e))))" & sum.data4$theta>0.0071 & sum.data4$theta<0.0073, ]
+p3<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0072", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(a,(b,(c,(d,e))))" & sum.data4$theta==0.0216, ]
+p4<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0216", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+ggarrange(p1 +
+               theme(axis.ticks.y = element_blank(),
+                     plot.margin = margin(r = 1, b=1) ), 
+          p2 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1) ), 
+          p3 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1)  ),
+          p4 +     theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(l = 1)  ),
+          nrow = 1)
+```
+
+```{r}
+
+sum.data5 <- sum.data4[sum.data4$tree=="(a,((b,c),(d,e)))" & sum.data4$theta==0.0008, ]
+p1<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0008", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(a,((b,c),(d,e)))" & sum.data4$theta>0.0023 & sum.data4$theta<0.0025, ]
+p2<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+  #labs(title="Theta = 0.0024", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(a,((b,c),(d,e)))" & sum.data4$theta>0.0071 & sum.data4$theta<0.0073, ]
+p3<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0072", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(a,((b,c),(d,e)))" & sum.data4$theta==0.0216, ]
+p4<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0216", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+ 
+ggarrange(p1 +
+               theme(axis.ticks.y = element_blank(),
+                     plot.margin = margin(r = 1, b=1) ), 
+          p2 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1) ), 
+          p3 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1)  ),
+          p4 +     theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(l = 1)  ),
+          nrow = 1)
+```
+
+```{r}
+sum.data5 <- sum.data4[sum.data4$tree=="((a,b),(c,(d,e)))" & sum.data4$theta==0.0008, ]
+p1<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0008", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="((a,b),(c,(d,e)))" & sum.data4$theta>0.0023 & sum.data4$theta<0.0025, ]
+p2<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0024", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="((a,b),(c,(d,e)))" & sum.data4$theta>0.0071 & sum.data4$theta<0.0073, ]
+p3<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0072", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="((a,b),(c,(d,e)))" & sum.data4$theta==0.0216, ]
+p4<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0216", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+ 
+ggarrange(p1 +
+               theme(axis.ticks.y = element_blank(),
+                     plot.margin = margin(r = 1, b=1) ), 
+          p2 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1) ), 
+          p3 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1)  ),
+          p4 +     theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(l = 1)  ),
+          nrow = 1)
+```
+
+```{r}
+sum.data5 <- sum.data4[sum.data4$tree=="(a,(b,(c,(d,(e,(f,(g,h)))))))" & sum.data4$theta==0.0008, ]
+p1<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0008", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(a,(b,(c,(d,(e,(f,(g,h)))))))" & sum.data4$theta>0.0023 & sum.data4$theta<0.0025, ]
+p2<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0024", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(a,(b,(c,(d,(e,(f,(g,h)))))))" & sum.data4$theta>0.0071 & sum.data4$theta<0.0073, ]
+p3<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0072", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(a,(b,(c,(d,(e,(f,(g,h)))))))" & sum.data4$theta==0.0216, ]
+p4<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0216", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+ggarrange(p1 +
+               theme(axis.ticks.y = element_blank(),
+                     plot.margin = margin(r = 1, b=1) ), 
+          p2 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1) ), 
+          p3 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1)  ),
+          p4 +     theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(l = 1)  ),
+          nrow = 1)
+```
+
+```{r}
+sum.data5 <- sum.data4[sum.data4$tree=="((a,b),((c,d),(e,(f,(g,h)))))" & sum.data4$theta==0.0008, ]
+p1<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0008", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="((a,b),((c,d),(e,(f,(g,h)))))" & sum.data4$theta>0.0023 & sum.data4$theta<0.0025, ]
+p2<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0024", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="((a,b),((c,d),(e,(f,(g,h)))))" & sum.data4$theta>0.0071 & sum.data4$theta<0.0073, ]
+p3<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0072", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="((a,b),((c,d),(e,(f,(g,h)))))" & sum.data4$theta==0.0216, ]
+p4<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0216", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+ggarrange(p1 +
+               theme(axis.ticks.y = element_blank(),
+                     plot.margin = margin(r = 1, b=1) ), 
+          p2 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1) ), 
+          p3 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1)  ),
+          p4 +     theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(l = 1)  ),
+          nrow = 1)
+```
+
+```{r}
+sum.data5 <- sum.data4[sum.data4$tree=="(((a,b),c),((d,e),(f,(g,h))))" & sum.data4$theta==0.0008, ]
+p1<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0008", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(((a,b),c),((d,e),(f,(g,h))))" & sum.data4$theta>0.0023 & sum.data4$theta<0.0025, ]
+p2<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0024", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(((a,b),c),((d,e),(f,(g,h))))" & sum.data4$theta>0.0071 & sum.data4$theta<0.0073, ]
+p3<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0072", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(((a,b),c),((d,e),(f,(g,h))))" & sum.data4$theta==0.0216, ]
+p4<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0216", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+ggarrange(p1 +
+               theme(axis.ticks.y = element_blank(),
+                     plot.margin = margin(r = 1, b=1) ), 
+          p2 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1) ), 
+          p3 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1)  ),
+          p4 +     theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(l = 1)  ),
+          nrow = 1)
+```
+
+
+
+
+```{r}
+sum.data5 <- sum.data4[sum.data4$tree=="(((a,b),(c,d)),((e,f),(g,h)))" & sum.data4$theta==0.0008, ]
+p1<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0008", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(((a,b),(c,d)),((e,f),(g,h)))" & sum.data4$theta>0.0023 & sum.data4$theta<0.0025, ]
+p2<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0024", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(((a,b),(c,d)),((e,f),(g,h)))" & sum.data4$theta>0.0071 & sum.data4$theta<0.0073, ]
+p3<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0072", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(((a,b),(c,d)),((e,f),(g,h)))" & sum.data4$theta==0.0216, ]
+p4<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0216", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+ggarrange(p1 +
+               theme(axis.ticks.y = element_blank(),
+                     plot.margin = margin(r = 1, b=1) ), 
+          p2 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1) ), 
+          p3 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1)  ),
+          p4 +     theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(l = 1)  ),
+          nrow = 1)
+```
+
+```{r}
+sum.data5 <- sum.data4[sum.data4$tree=="(a,(b,(c,(d,(e,(f,(g,(h,(i,(j,(k,l)))))))))))" 
+                       & sum.data4$theta==0.0008, ]
+p1<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0008", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(a,(b,(c,(d,(e,(f,(g,(h,(i,(j,(k,l)))))))))))" 
+                       & sum.data4$theta>0.0023 & sum.data4$theta<0.0025, ]
+p2<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0024", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(a,(b,(c,(d,(e,(f,(g,(h,(i,(j,(k,l)))))))))))" 
+                       & sum.data4$theta>0.0071 & sum.data4$theta<0.0073, ]
+p3<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0072", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(a,(b,(c,(d,(e,(f,(g,(h,(i,(j,(k,l)))))))))))" 
+                       & sum.data4$theta==0.0216, ]
+p4<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0216", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+ggarrange(p1 +
+               theme(axis.ticks.y = element_blank(),
+                     plot.margin = margin(r = 1, b=1) ), 
+          p2 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1) ), 
+          p3 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1)  ),
+          p4 +     theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(l = 1)  ),
+          nrow = 1)
+```
+
+```{r}
+sum.data5 <- sum.data4[sum.data4$tree=="((a,b),((c,(d,(e,f))),((g,h),((i,j),(k,l)))))" 
+                       & sum.data4$theta==0.0008, ]
+p1<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0008", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="((a,b),((c,(d,(e,f))),((g,h),((i,j),(k,l)))))" 
+                       & sum.data4$theta>0.0023 & sum.data4$theta<0.0025, ]
+p2<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0024", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="((a,b),((c,(d,(e,f))),((g,h),((i,j),(k,l)))))" 
+                       & sum.data4$theta>0.0071 & sum.data4$theta<0.0073, ]
+p3<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0072", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="((a,b),((c,(d,(e,f))),((g,h),((i,j),(k,l)))))" 
+                       & sum.data4$theta==0.0216, ]
+p4<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0216", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+ggarrange(p1 +
+               theme(axis.ticks.y = element_blank(),
+                     plot.margin = margin(r = 1, b=1) ), 
+          p2 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1) ), 
+          p3 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1)  ),
+          p4 +     theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(l = 1)  ),
+          nrow = 1)
+```
+
+```{r}
+sum.data5 <- sum.data4[sum.data4$tree=="((a,(b,c)),((d,(e,f)),((g,(h,i)),(j,(k,l)))))" 
+                       & sum.data4$theta==0.0008, ]
+p1<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0008", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="((a,(b,c)),((d,(e,f)),((g,(h,i)),(j,(k,l)))))" 
+                       & sum.data4$theta>0.0023 & sum.data4$theta<0.0025, ]
+p2<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0024", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="((a,(b,c)),((d,(e,f)),((g,(h,i)),(j,(k,l)))))" 
+                       & sum.data4$theta>0.0071 & sum.data4$theta<0.0073, ]
+p3<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0072", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="((a,(b,c)),((d,(e,f)),((g,(h,i)),(j,(k,l)))))" 
+                       & sum.data4$theta==0.0216, ]
+p4<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0216", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+ggarrange(p1 +
+               theme(axis.ticks.y = element_blank(),
+                     plot.margin = margin(r = 1, b=1) ), 
+          p2 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1) ), 
+          p3 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1)  ),
+          p4 +     theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(l = 1)  ),
+          nrow = 1)
+```
+
+```{r}
+sum.data5 <- sum.data4[sum.data4$tree=="(((a,b),(c,d)),(((e,f),(g,h)),((i,j),(k,l))))" 
+                       & sum.data4$theta==0.0008, ]
+p1<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0008", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(((a,b),(c,d)),(((e,f),(g,h)),((i,j),(k,l))))" 
+                       & sum.data4$theta>0.0023 & sum.data4$theta<0.0025, ]
+p2<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0024", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(((a,b),(c,d)),(((e,f),(g,h)),((i,j),(k,l))))" 
+                       & sum.data4$theta>0.0071 & sum.data4$theta<0.0073, ]
+p3<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0072", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(((a,b),(c,d)),(((e,f),(g,h)),((i,j),(k,l))))" 
+                       & sum.data4$theta==0.0216, ]
+p4<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0216", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+ggarrange(p1 +
+               theme(axis.ticks.y = element_blank(),
+                     plot.margin = margin(r = 1, b=1) ), 
+          p2 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1) ), 
+          p3 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1)  ),
+          p4 +     theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(l = 1)  ),
+          nrow = 1)
+
+```
+
+```{r}
+sum.data5 <- sum.data4[sum.data4$tree=="(((a,(b,c)),(d,(e,f))),((g,(h,i)),(j,(k,l))))" 
+                       & sum.data4$theta==0.0008, ]
+p1<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0008", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(((a,(b,c)),(d,(e,f))),((g,(h,i)),(j,(k,l))))" 
+                       & sum.data4$theta>0.0023 & sum.data4$theta<0.0025, ]
+p2<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+ # labs(title="Theta = 0.0024", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(((a,(b,c)),(d,(e,f))),((g,(h,i)),(j,(k,l))))" 
+                       & sum.data4$theta>0.0071 & sum.data4$theta<0.0073, ]
+p3<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0072", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+sum.data5 <- sum.data4[sum.data4$tree=="(((a,(b,c)),(d,(e,f))),((g,(h,i)),(j,(k,l))))" 
+                       & sum.data4$theta==0.0216, ]
+p4<- ggplot(sum.data5, aes(x=as.factor(sites_per_gene), y=percent, group=interaction(method,genes)
+                          , color=interaction(method,genes)
+                          )) +
+  geom_line() +
+   geom_point() + 
+   geom_errorbar(aes(ymin=percent-percent_se, ymax=percent+percent_se), width=.2,
+                 position=position_dodge(0.05))+
+    theme(legend.position = "none")+
+#  labs(title="Theta = 0.0216", x= "Sites per gene", y="Mean RF distance")+
+  expand_limits( y=c(0, 1))+
+  scale_colour_manual(values=colors_used)+
+  xlab("Sites per gene")+
+  ylab("Mean normalized RF distance")+
+  theme(axis.text=element_text(size=12),
+        axis.title.y=element_text(size=14,face="bold"), axis.title.x=element_text(size=12,face="bold"))
+
+
+ggarrange(p1 +
+               theme(axis.ticks.y = element_blank(),
+                     plot.margin = margin(r = 1, b=1) ), 
+          p2 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1) ), 
+          p3 + 
+               theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(r = 1, l = 1)  ),
+          p4 +     theme(axis.text.y = element_blank(),
+                     axis.ticks.y = element_blank(),
+                     axis.title.y = element_blank(),
+                     plot.margin = margin(l = 1)  ),
+          nrow = 1)
+```
+
+# changing MBL
+```{r}
+sum.data <- read_excel("Simultation data /method comparison 2.xlsx", sheet = "final1")
+sum.data <- read_excel("Simultation data /method comparison 2.xlsx", sheet = "final2")
+sum.data <- read_excel("Simultation data /method comparison 2.xlsx", sheet = "finalpt2")
+ View(sum.data)
+class(sum.data)
+
+
+```
+
+ 

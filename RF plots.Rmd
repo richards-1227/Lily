@@ -1,0 +1,366 @@
+---
+title: "RF plots"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(ape)
+```
+
+
+```{r}
+group=c(rep("0.0008",3), rep("0.0024",3), rep("0.0072",3), rep("0.0216",3))
+Weighted = rep(c("Bayes Rooted","Bayes Unrooted","SVDQ"), 4)
+Out = c(1.56,	0.74,	0.56, 0.52, 0.16,	0.18, 0.26, 0.12,	0.24, 0.08,	0.08,	0.54 )
+var = c(1.9664,	0.9324,	0.8064, 0.8496,	0.2944,	0.3276, 0.4524,	0.2256,	0.4224, 0.1536,	0.1536,	0.7884)
+se = sqrt(var)/10
+correct = c(38,	63,	72, 75,	92,	91, 87,	94,	88, 96,	96,	73)
+tgc = data.frame(group, Weighted, Out, se, correct)
+tgc
+```
+
+```{r}
+group=c(rep("0.0008",3), rep("0.0024",3), rep("0.0072",3), rep("0.0216",3))
+Weighted = rep(c("Bayes Rooted","Bayes Unrooted","SVDQ"), 4)
+Out = c(3.82,	2.44,	1.22, 0.92,	0.7,	0.58, 0.42,	0.28,	0.52, 0.24,	0.18,	1.18 )
+var = c(7.1276,	4.2064,	2.3116, 1.9536,	1.23,	0.9836,0.9036,	0.4816,	1.0096, 0.5024,	0.3276,	2.2476)
+se = sqrt(var)/10
+correct = c(21,	30,	55, 64,	69,	73, 82,	86,	77, 89,	91,	57)
+eight = data.frame(group, Weighted, Out, se, correct)
+eight
+```
+
+```{r}
+library(ggplot2)
+ggplot(tgc, aes(x=as.factor(group), y=Out, fill=Weighted)) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Theta") +
+     ylab("Mean RF Distance") +
+  scale_fill_discrete(name="Method") +
+  geom_errorbar(aes(ymin=Out-se, ymax=Out+se), width=.2,position=position_dodge(.9))
+```
+
+```{r}
+ggplot(tgc, aes(x=as.factor(group), y=correct, fill=Weighted)) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Theta") +
+     ylab("Percent correct") +
+  scale_fill_discrete(name="Method")
+```
+
+```{r}
+ggplot(eight, aes(x=as.factor(group), y=Out, fill=Weighted)) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Theta") +
+     ylab("Mean RF Distance") +
+  scale_fill_discrete(name="Method") +
+  geom_errorbar(aes(ymin=Out-se, ymax=Out+se), width=.2,position=position_dodge(.9))
+```
+
+```{r}
+ggplot(eight, aes(x=as.factor(group), y=correct, fill=Weighted)) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Theta") +
+     ylab("Percent correct") +
+  scale_fill_discrete(name="Method")
+```
+
+```{r}
+group=c(rep("50000",3), rep("2000",3), rep("400",3), rep("100",3))
+Weighted = rep(c("Bayes Rooted","Bayes Unrooted","SVDQ"), 4)
+Out = c(0.56,	0.46,	1.04, 0.26,	0.26,	0.72, 0.22,	0.22,	0.54, 0.58,	0.48,	1.18 )
+var = c(0.9664,	0.7884,	1.4784, 0.5324,	0.5324,	1.3216,0.4716,	0.4716,	0.8684, 1.1436,	0.8896,	1.6076)
+se = sqrt(var)/10
+correct = c(74,	78,	54, 88,	88,	69, 90,	90,	74, 75,	78,	49)
+eight = data.frame(group, Weighted, Out, se, correct)
+eight$rowID = 1:12
+
+
+  
+
+ggplot(eight, aes(x=reorder(group, rowID), y=Out, fill=Weighted)) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Number of genes") +
+     ylab("Mean RF Distance") +
+  scale_fill_discrete(name="Method") +
+  geom_errorbar(aes(ymin=Out-se, ymax=Out+se), width=.2,position=position_dodge(.9))
+  
+  ggplot(eight, aes(x=reorder(group, rowID), y=correct, fill=Weighted)) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Number of genes") +
+     ylab("Percent correct") +
+  scale_fill_discrete(name="Method")
+```
+
+```{r}
+group=c(rep("2000/40",3), rep("200/400",3))
+Weighted = rep(c("Bayes Rooted","Bayes Unrooted","SVDQ"), 4)
+Out = c(0.16,	0.14,	0.28, 0.48,	0.42,	0.74 )
+var = c(0.2944,	0.2604,	0.4816, 0.8096,	0.7436,	1.1724)
+se = sqrt(var)/10
+correct = c(92,	93,	86, 77,	80,	66)
+eight = data.frame(group, Weighted, Out, se, correct)
+eight$rowID = 1:6
+
+
+  
+
+ggplot(eight, aes(x=reorder(group, rowID), y=Out, fill=Weighted)) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Number of genes/sites per gene") +
+     ylab("Mean RF Distance") +
+  scale_fill_discrete(name="Method") +
+  geom_errorbar(aes(ymin=Out-se, ymax=Out+se), width=.2,position=position_dodge(.9))
+  
+  ggplot(eight, aes(x=reorder(group, rowID), y=correct, fill=Weighted)) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Number of genes/sites per gene") +
+     ylab("Percent correct") +
+  scale_fill_discrete(name="Method")
+```
+
+```{r}
+group=c(rep("(a,(b,(c,(d,e))))",3), rep("(a,((b,c),(d,e)))",3), rep("((a,b),(c,(d,e)))",3))
+Weighted = rep(c("Bayes Rooted","Bayes Unrooted","SVDQ"), 3)
+Out = c(0.9,	0.62,	1.54, 0.48,	0.12,	1.46, 0.42,	0.2,	1.04 )
+var = c(1.31,	0.9356,	1.6684, 0.9696,	0.2256,	1.0284, 0.8236,	0.36,	0.9984)
+se = sqrt(var)/10
+correct = c(59,	70,	35, 79,	94,	30, 79,	94,	30)
+eight = data.frame(group, Weighted, Out, se, correct)
+eight$rowID = 1:9
+
+
+  
+
+ggplot(eight, aes(x=reorder(group, rowID), y=Out, fill=Weighted)) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Topology") +
+     ylab("Mean RF Distance") +
+  scale_fill_discrete(name="Method") +
+  geom_errorbar(aes(ymin=Out-se, ymax=Out+se), width=.2,position=position_dodge(.9))
+  
+  ggplot(eight, aes(x=reorder(group, rowID), y=correct, fill=Weighted)) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Topology") +
+     ylab("Percent correct") +
+  scale_fill_discrete(name="Method")
+```
+
+```{r}
+group=c(rep("0",3), rep("1",3), rep("2",3), rep("3",3))
+Weighted = rep(c("Bayes Rooted","Bayes Unrooted","SVDQ"), 4)
+Out = c(0,	0,	0, 0.5,	0,	0, 0.88,	0.18,	0, 1.58,	0.8,	0.88 )
+var = c(0,	0,	0, 0.75,	0,	0,1.7056,	0.3276,	0, 2.7436,	1.28,	0.9856)
+se = sqrt(var)/10
+correct = c(100,	100,	100, 75,	100,	100, 65,	91,	100, 43,	64,	56)
+eight = data.frame(group, Weighted, Out, se, correct)
+eight$rowID = 1:12
+
+
+  
+
+ggplot(eight, aes(x=reorder(group, rowID), y=Out, fill=Weighted)) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Very short internal branches") +
+     ylab("Mean RF Distance") +
+  scale_fill_discrete(name="Method") +
+  geom_errorbar(aes(ymin=Out-se, ymax=Out+se), width=.2,position=position_dodge(.9))
+  
+  ggplot(eight, aes(x=reorder(group, rowID), y=correct, fill=Weighted)) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Very short internal branches") +
+     ylab("Percent correct") +
+  scale_fill_discrete(name="Method")
+```
+
+```{r}
+group=c(rep("4",3), rep("10",3))
+Weighted = rep(c("Bayes Rooted","Bayes Unrooted","SVDQ"), 2)
+Out = c(0.7,	0.34,	0.8, 1,	0.6,	0.74 )
+var = c(0.99,	0.5644,	1.12, 1.48,	0.84,	0.9324)
+se = sqrt(var)/10
+correct = c(66,	83,	62, 56,	70,	63)
+eight = data.frame(group, Weighted, Out, se, correct)
+eight$rowID = 1:6
+
+
+  
+
+ggplot(eight, aes(x=reorder(group, rowID), y=Out, fill=Weighted)) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Root age") +
+     ylab("Mean RF Distance") +
+  scale_fill_discrete(name="Method") +
+  geom_errorbar(aes(ymin=Out-se, ymax=Out+se), width=.2,position=position_dodge(.9))
+  
+  ggplot(eight, aes(x=reorder(group, rowID), y=correct, fill=Weighted)) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Root age") +
+     ylab("Percent correct") +
+  scale_fill_discrete(name="Method")
+```
+
+```{r}
+averagedBoot=c(.17, .19, .46, .71, .9, .26, .27, .35, .73, .8)
+maxBoot=c(.25, .19, .54, .74, .91, .21, .36, .37, .77, .82)
+probCor= c(.11, .255, .465, .7, .915, .145, .385, .565, .77, .945)
+eightTaxa=c(5,5,5,5,5,8,8,8,8,8)
+plot(probCor, maxBoot)
+plot(probCor, averagedBoot)
+df2=data.frame(probCor, averagedBoot, eightTaxa)
+```
+
+```{r}
+ggplot(df2, aes(x = probCor, y = averagedBoot)) +
+    geom_point(aes(color = factor(eightTaxa))) +
+         xlab("P(Estimated tree correct)") +
+     ylab("Averge bootstrap support") +
+  stat_smooth(method = "lm", se=FALSE) +
+  labs(color="Taxa") 
+```
+#Root age 0.4
+```{r}
+group=c(rep(c(1000, 3000, 9000, 27000, 81000, 244000), 5))
+Weighted = c(rep(.0003, 6), rep(.001, 6), rep(.003, 6), rep(.01, 6), rep(.03, 6))
+Out = c(.349, .362, .394, .431, .606, .751, .353, .381, .4, .562, .804, .972, .389, .425, .624, .828, .958, 1, .467, .669, .851, .989, .999, 1, .591, .838, .981, 1, 1, 1)
+var = c(.006, .014, .044, .091, .133, .141, .022, .040, .091, .141, .096, .024, .055, .091, .131, .105, .033, 0, .094, .115, .093, .006, 0, 0, .148, .093, .012, 0, 0, 0)
+se = sqrt(var)/10
+eight = data.frame(group, Weighted, Out, se)
+
+ggplot(eight, aes(x=as.factor(group), y=Out, fill=as.factor(Weighted))) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Number of sites (theta-hat = 0.003)") +
+     ylab("Mean posterior probability of true tree") +
+   scale_fill_discrete(name="True theta") +
+  geom_errorbar(aes(ymin=Out-se, ymax=Out+se), width=.2,position=position_dodge(.9))
+```
+# Root age 1.0
+```{r}
+group=c(rep(c(1000, 3000, 9000, 27000, 81000, 244000), 5))
+Weighted = c(rep(.0003, 6), rep(.001, 6), rep(.003, 6), rep(.01, 6), rep(.03, 6))
+Out = c(.334, .386, .445, .646, .829, .979, .393, .431, .665, .871, .997, 1, .487, .606, .845, .999, 1, 1, .651, .871, .995, 1, 1, 1, .886, .998, 1, 1, 1, 1)
+var = c(.006, .018, .062, .082, .081, .011, .030, .048, .117, .068, .001, 0, .058, .107, .079, 0, 0, 0, .098, .062, .001, 0, 0, 0, .055, 0, 0, 0, 0, 0)
+se = sqrt(var)/10
+eight = data.frame(group, Weighted, Out, se)
+
+ggplot(eight, aes(x=as.factor(group), y=Out, fill=as.factor(Weighted))) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Number of sites (theta-hat = 0.003)") +
+     ylab("Mean posterior probability of true tree") +
+   scale_fill_discrete(name="True theta") +
+  geom_errorbar(aes(ymin=Out-se, ymax=Out+se), width=.2,position=position_dodge(.9))
+```
+
+# Root age 2.0
+```{r}
+group=c(rep(c(1000, 3000, 9000, 27000, 81000, 244000), 5))
+Weighted = c(rep(.0003, 6), rep(.001, 6), rep(.003, 6), rep(.01, 6), rep(.03, 6))
+Out = c(.362, .411, .579, .782, .962, 1, .397, .571, .781, .966, 1, 1, .591, .856, .987, 1, 1, 1, .854, .981, 1, 1, 1, 1, .987, 1, 1, 1, 1, 1)
+var = c(.012, .032, .071, .092, .021, 0, .029, .077, .082, .019, 0, 0, .068, .053, .002, 0, 0, 0, .051, .011, 0, 0, 0, 0, .008, 0, 0, 0, 0, 0)
+se = sqrt(var)/10
+eight = data.frame(group, Weighted, Out, se)
+
+ggplot(eight, aes(x=as.factor(group), y=Out, fill=as.factor(Weighted))) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Number of sites (theta-hat = 0.003)") +
+     ylab("Mean posterior probability of true tree") +
+   scale_fill_discrete(name="True theta") +
+  geom_errorbar(aes(ymin=Out-se, ymax=Out+se), width=.2,position=position_dodge(.9))
+```
+
+#Root age 4.0
+```{r}
+group=c(rep(c(1000, 3000, 9000, 27000, 81000, 244000), 5))
+Weighted = c(rep(.0003, 6), rep(.001, 6), rep(.003, 6), rep(.01, 6), rep(.03, 6))
+Out = c(.409, .463, .715, .922, .999, 1, .541, .748, .977, 1, 1, 1, .727, .948, .999, 1, 1, 1, .976, 1, 1, 1, 1, 1, .999, 1, 1, 1, 1, 1)
+var = c(.024, .045, .081, .026, 0, 0, .053, .071, .004, 0, 0, 0, .081, .022, 0, 0, 0, 0, .011, rep(0, 11))
+se = sqrt(var)/10
+eight = data.frame(group, Weighted, Out, se)
+
+ggplot(eight, aes(x=as.factor(group), y=Out, fill=as.factor(Weighted))) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Number of sites (theta-hat = 0.003)") +
+     ylab("Mean posterior probability of true tree") +
+   scale_fill_discrete(name="True theta") +
+  geom_errorbar(aes(ymin=Out-se, ymax=Out+se), width=.2,position=position_dodge(.9))
+```
+
+#Root age 2.0
+```{r}
+group=c(rep(c(1000, 3000, 9000, 27000, 81000, 244000), 5))
+Weighted = c(rep(.0003, 6), rep(.001, 6), rep(.003, 6), rep(.01, 6), rep(.03, 6))
+Out = c()
+var = c()
+se = sqrt(var)/10
+eight = data.frame(group, Weighted, Out, se)
+
+ggplot(eight, aes(x=as.factor(group), y=Out, fill=as.factor(Weighted))) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Number of sites (theta-hat = 0.001)") +
+     ylab("Mean posterior probability of true tree") +
+   scale_fill_discrete(name="True theta") +
+  geom_errorbar(aes(ymin=Out-se, ymax=Out+se), width=.2,position=position_dodge(.9))
+```
+
+
+# Beta
+```{r}
+group=c(rep(c(1000, 3000, 9000, 27000, 81000, 244000), 5))
+Weighted = c(rep(.005, 6), rep(.05, 6), rep(.5, 6), rep(5, 6), rep(50, 6))
+Out = c(.652, .858, .992, 1, 1, 1, .658, .817, .987, 1, 1, 1, .581, .853, .991, 1,1,1, .399, .539, .861, .998, 1, 1, .342, .362, .417, .584, .914, .999)
+var = c(.083, .071, .001, 0, 0, 0, .111, .091, .009, 0, 0, 0, .075, .061, .001, 0, 0 ,0, .008, .018, .019, 0, 0, 0, 0, 0, 0, .003, .001, 0)
+se = sqrt(var)/10
+eight = data.frame(group, Weighted, Out, se)
+
+ggplot(eight, aes(x=as.factor(group), y=Out, fill=as.factor(Weighted))) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+        xlab("Number of sites (theta=0.003)") +
+     ylab("Mean posterior probability of true tree") +
+   scale_fill_discrete(name="Beta") +
+  geom_errorbar(aes(ymin=Out-se, ymax=Out+se), width=.2,position=position_dodge(.9))
+```
+
+```{r}
+# 3 taxa
+treeA=read.tree(text="(a:1.0,(b:0.5,c:0.5):0.5);")
+plot(treeA)
+
+# 5 taxa
+treeA=read.tree(text="((a:0.8,b:0.8):0.7,(c:1.0,(d:0.5,e:0.5):0.5):0.5);")
+plot(treeA)
+treeA=read.tree(text="(a:1.5,((b:0.5,c:0.5):0.5,(d:0.5,e:0.5):0.5):0.5);")
+plot(treeA)
+treeA=read.tree(text="(a:2.0,(b:1.5,(c:1.0,(d:0.5,e:0.5):0.5):0.5):0.5);")
+plot(treeA)
+
+# 8 taxa
+treeA=read.tree(text="(a:1.0,(b:0.5,c:0.5):0.5);")
+plot(treeA)
+treeA=read.tree(text="(a:1.0,(b:0.5,c:0.5):0.5);")
+plot(treeA)
+treeA=read.tree(text="(a:1.0,(b:0.5,c:0.5):0.5);")
+plot(treeA)
+treeA=read.tree(text="(a:1.0,(b:0.5,c:0.5):0.5);")
+plot(treeA)
+
+# 12 taxa
+treeA=read.tree(text="(a:1.0,(b:0.5,c:0.5):0.5);")
+plot(treeA)
+treeA=read.tree(text="(a:1.0,(b:0.5,c:0.5):0.5);")
+plot(treeA)
+treeA=read.tree(text="(a:1.0,(b:0.5,c:0.5):0.5);")
+plot(treeA)
+treeA=read.tree(text="(a:1.0,(b:0.5,c:0.5):0.5);")
+plot(treeA)
+treeA=read.tree(text="(a:1.0,(b:0.5,c:0.5):0.5);")
+plot(treeA)
+
+
+
+```
+
