@@ -54,3 +54,13 @@ quadBootSum.cpp -- Summarizes bootstrap output. Compile similar to getGenes.cpp
   
 summary.cpp -- Summarizes simulation output. Compile similar to getGenes.cpp
   Executable arguments: 1) input file name, 2) number of simulation runs 3) Indicator 0=unrooted 1=rooted 4)# of taxa
+  
+simulation_settings.xlsx -- contains the branch lenghts and ms program settings for the allMethodScript.pl files
+
+simulation_results.Rmd -- R code for creating the RF distance plot comparisons of Lily-Q vs. ASTRAL
+
+RF distance calculator.Rmd -- R code using ape package for double-checking my summary.cpp code
+
+robustness_checks.Rmd -- R code for the closed-form calculations checking the impact of theta and beta assumptions
+
+output_data.xlsx -- raw output (inputs to simulation_results.Rmd)
