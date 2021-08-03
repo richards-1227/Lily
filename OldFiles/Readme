@@ -1,1 +1,46 @@
 This folder is for older versions of code
+
+allMethodScript.pl -- this is the file that runs all the simulations. Adjustments that need to be made: lines 9-10,40, 73 for different #genes, gene length lines 25-28 for different branch lengths when the topology changes line 34 for the topology changing line 48 for theta after line 59, 67, 80 to add additional taxa if more than 5 taxa used
+
+allMethodScript.pl -- simulation file needed for small # of genes and sites/gene. Similar adjustments as the allMethodScript.pl file
+
+bootScript3.pl -- This file runs the bootScript simulations
+
+awk.Script3 -- this file ensures the taxa data output gets ordered correctly. Need one of these files per taxa
+
+FT2/3/5.pl -- these files run FastTree on 10/50/500 genes respectively
+
+getGene.cpp -- This file splits the simulated data out by gene. Compile command: g++ getGene.cpp -o -std=c++11
+possible adjustment needed: line 40 depending on case of phylip input
+
+paupfile -- runs SVDQuartets on simulated data
+
+paupFooter/2/Header/Header2 -- used for formatting
+
+LilyT.cpp -- Runs LilyT on simulated data. This and all the other C++ programs used TBB for parallelization. Lines 19-20 may need adjustment based on path headers. Compile command: g++ LilyT.cpp -o -std=c++11 -L -ltbb -I Other adjustments: line 321 for case Executable arguments: 1) input file name, 2) theta (used 0.003)
+
+LilyQmultiInd.cpp -- runs LilyQ on empirical data when more than 1 individual/species Compilation and adjustments similar to LilyT Executable arguments: 1) input file name, 2) theta (used 0.003) 3) file with species name and # individuals/species 4) number of Taxa
+
+LilyQmultiInd.cpp -- runs LilyQ on mosquito dataset (size and formatting of file required a differenct executable) Compilation, adjustments, and arguments similar to LilyT
+
+quadBootMos.cpp -- Takes mosquito data as input, runs bootstrapping and outputs the aligned bootstrap sample compile command similar to getGene.cpp Executable arguments: 1) input file name, 2) # of genes 3) file with list of gene lengths 4) Indicator 1=first run (don't resample, output original dataset intact) 0=bootstrap
+
+quadBootReal.cpp -- same as quadBootMos.cpp for all other datasets
+
+tripBootReal.cpp -- takes aligned data input, forms all bootstrapping, and outputs estimate plus a bootstrap estimate for each bootstrap sample Executable arguments: 1) input file name, 2) theta 3) # bootstrap samples to take 4) # genes 5) file with list of gene lengths
+
+tripBootMultiInd.cpp -- Similar to tripBootReal.cpp if there is more than one individual per species Executable arguments: 1) input file name, 2) theta 3) # bootstrap samples to take 4) # genes 5) file with list of gene lengths 6) file with species name and # individuals/species 7) number of Taxa
+
+quadBootSum.cpp -- Summarizes bootstrap output. Compile similar to getGenes.cpp Executable arguments: 1) input file name, 2) tree tree in Newick format 3) # of taxa 4) # of bootstrap samples taken
+
+summary.cpp -- Summarizes simulation output. Compile similar to getGenes.cpp Executable arguments: 1) input file name, 2) number of simulation runs 3) Indicator 0=unrooted 1=rooted 4)# of taxa
+
+simulation_settings.xlsx -- contains the branch lenghts and ms program settings for the allMethodScript.pl files
+
+simulation_results.Rmd -- R code for creating the RF distance plot comparisons of Lily-Q vs. ASTRAL
+
+RF distance calculator.Rmd -- R code using ape package for double-checking my summary.cpp code
+
+robustness_checks.Rmd -- R code for the closed-form calculations checking the impact of theta and beta assumptions
+
+output_data.xlsx -- raw output (inputs to simulation_results.Rmd)
